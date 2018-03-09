@@ -22,6 +22,7 @@ chrome.runtime.onMessage.addListener(
         console.log(request);
         var {videoId, lang, token} = request;
         console.log(videoId)
+        document.getElementsByClassName("video-stream html5-main-video")[0].volume = 0.2;
         getLang();
         // $('.title').html(request.videoID);
 
