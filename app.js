@@ -3,7 +3,7 @@ $(function(){
     console.log("Hello this is app.js");
     const YOUTUBE_URL = "https://www.youtube.com/watch?v=";
     const MS_TOKEN_URL = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
-    const MS_KEY = "2eccce672d9d4dbf89edc26405d91df8";
+    const MS_KEY = "30a867c272fe41d5b11e3e4ebaf63f7a";
 
     const DEFAULT_LANGUAGE_TO = "en"
     //get vidId
