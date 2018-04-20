@@ -49,8 +49,6 @@ chrome.runtime.onMessage.addListener(
         }
 
         function loadScript(videoId, languageFrom) {
-            // console.log("**********loadScript Start*********");
-            // console.log(videoId)
             let script;
             $.ajax({
                 url: GOOGLE_VIDEO_API,
@@ -65,7 +63,7 @@ chrome.runtime.onMessage.addListener(
                     console.log(script)
                     for(let i = 0; i < script.length; i++){
                         setTimeout(()=>{
-                            translate(script[i].script);
+                            translate(script[i].script, i);
                         }, script[i].startTime*1000);
                     }
                 }
@@ -96,15 +94,16 @@ chrome.runtime.onMessage.addListener(
         function isStartingWithLowerCase(myString) { 
             return (myString.charAt(0) == myString.charAt(0).toLowerCase()); 
         } 
-          
-        function htmlDecode(input) {
-            var e = document.createElement('div');
-            e.innerHTML = input;
-            // console.log(e.childNodes[0].nodeValue);
-            return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
-        }
 
-        function translate(script) {
+        // 04/20/2018 5:24AM 현민: instead of using htmlDecode, used 'replace' to replace single and double quotes.
+        // function htmlDecode(input) {
+        //     var e = document.createElement('div');
+        //     e.innerHTML = input;
+        //     // console.log(e.childNodes[0].nodeValue);
+        //     return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+        // }
+
+        function translate(script, i) {
             // script = htmlDecode(script);
             $.ajax({
                 url: MS_URL + "/Translate",
@@ -117,19 +116,22 @@ chrome.runtime.onMessage.addListener(
                     console.log(script);
                     var translatedScript = (result.getElementsByTagName('string')[0].innerHTML);
                     console.log(translatedScript);
-                    // voiceOver(translatedScript);
+                    voiceOver(translatedScript, i);
+                    console.log(document.getElementById("voice0").duration);
+
+
                 }
             })
         }
 
-        function voiceOver(translatedScript) {
+        function voiceOver(translatedScript, i) {
             var VidSource = MS_URL + "/Speak?appid=Bearer " + token + "&format=audio/mp3&options=male&language=" + lang + "&text=" + translatedScript;
 
             if ($("#video-source") != null) {
                 $("#video-source").remove();
             }
             var aud = $("<audio>");
-            $(aud).attr({ "id": "voice", "autoplay": "" });
+            $(aud).attr({ "id": `voice${i}`, "autoplay": "" });
             var vidSrc = $("<source>");
             vidSrc.attr({
                 "id": "video-source",
