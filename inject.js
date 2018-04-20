@@ -59,51 +59,50 @@ chrome.runtime.onMessage.addListener(
                     lang: languageFrom,
                 },
                 success: (result) => {
-                    script = result.getElementsByTagName("text");
+                    script = result.getElementsByTagName("text"); //array of scripts
                     ytplayer.currentTime = 0;
-                    let cont = false;
-                    let startTime = 0.0;
-                    let val = "";
-                    for (var i = 0; i <= script.length; i++) {
-                        if ((i > 0 && !cont) || i == script.length) {
-                            let voice = val;
-                            startTime = parseFloat(startTime);
-                            // wait until audio and video sync
-                            setTimeout(function () {
-                                // console.log("startTime: " + startTime + " : playerTime:" + ytplayerTime + " val:" + voice);
-                                translate(voice);
-                            }, (startTime * 1000));
-                            console.log("*******VAL********", voice);
-                            if (i == script.length) break;
-                        }
-
-                        if (!cont) {
-                            startTime = script[i].getAttribute("start");
-                            val = "";
-                        }
-                        let line = script[i]["textContent"].replace(/\n/g, " ");
-                        // if the line starts with a lower case
-                        if (i < script.length-1) {
-                            let next = script[i+1]["textContent"].replace(/\n/g, " ");
-                            if (isLowerCase(next)) {
-                                cont = true;
-                            } else {
-                                cont = false;
-                            }
-                        }
-                        val += htmlDecode(line) + " ";
-                    }
+                    console.log(script);
+                    script = processScript(script);
+                    // console.log(script)
+                    // for(let i = 0; i < script.length; i++){
+                    //     setTimeout(()=>{
+                    //         translate(script[i].script);
+                    //     }, script[i].startTime*1000);
+                    // }
                 }
             })
         }
 
-        function isLowerCase(myString) { 
+        function processScript(originalScripts){
+            let copiedScripts = [];
+
+            //hard copy
+            for(let i = 0; i < originalScripts.length; i++){
+                let temp = {};
+                temp.startTime = +originalScripts[i].getAttribute("start");
+                temp.script = unescape(originalScripts[i].innerHTML);
+                // console.log(temp.script);
+                copiedScripts.push(temp);
+            }
+
+            for(let i = 0; i < copiedScripts.length; i++){
+                if(isStartingWithLowerCase(copiedScripts[i].script)){
+                    copiedScripts[i-1].script = copiedScripts[i-1].script + " " + copiedScripts[i].script;
+                    copiedScripts.splice(i, 1);
+                    i--;
+                }
+            }
+            return copiedScripts;
+        }
+
+        function isStartingWithLowerCase(myString) { 
             return (myString.charAt(0) == myString.charAt(0).toLowerCase()); 
-          } 
+        } 
           
         function htmlDecode(input) {
             var e = document.createElement('div');
             e.innerHTML = input;
+            // console.log(e.childNodes[0].nodeValue);
             return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
         }
 
@@ -117,8 +116,9 @@ chrome.runtime.onMessage.addListener(
                 },
                 success: (result) => {
                     var translatedScript = (result.getElementsByTagName('string')[0].innerHTML);
+                    console.log(script);
                     console.log(translatedScript)
-                    voiceOver(translatedScript);
+                    // voiceOver(translatedScript);
                 }
             })
         }
