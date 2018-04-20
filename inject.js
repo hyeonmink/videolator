@@ -79,7 +79,7 @@ chrome.runtime.onMessage.addListener(
             for(let i = 0; i < originalScripts.length; i++){
                 let temp = {};
                 temp.startTime = +originalScripts[i].getAttribute("start");
-                temp.script = originalScripts[i].innerHTML.replace(/\n/g," ");
+                temp.script = "" + originalScripts[i].innerHTML.replace(/\n/g," ").replace(/&amp;#39;/g, "\'").replace(/&amp;quot;/g, "\"");
                 copiedScripts.push(temp);
             }
 
@@ -105,8 +105,7 @@ chrome.runtime.onMessage.addListener(
         }
 
         function translate(script) {
-            script = htmlDecode(script);
-            console.log(script);
+            // script = htmlDecode(script);
             $.ajax({
                 url: MS_URL + "/Translate",
                 data: {
@@ -115,16 +114,16 @@ chrome.runtime.onMessage.addListener(
                     text: script
                 },
                 success: (result) => {
+                    console.log(script);
                     var translatedScript = (result.getElementsByTagName('string')[0].innerHTML);
-                    console.log(htmlDecode(script));
-                    console.log(translatedScript)
-                    voiceOver(translatedScript);
+                    console.log(translatedScript);
+                    // voiceOver(translatedScript);
                 }
             })
         }
 
         function voiceOver(translatedScript) {
-            var VidSource = MS_URL + "/Speak?appid=Bearer " + token + "&format=audio/mp3&options=male&language=" + lang + "&text=" + htmlDecode(translatedScript);
+            var VidSource = MS_URL + "/Speak?appid=Bearer " + token + "&format=audio/mp3&options=male&language=" + lang + "&text=" + translatedScript;
 
             if ($("#video-source") != null) {
                 $("#video-source").remove();
