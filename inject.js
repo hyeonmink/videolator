@@ -49,8 +49,6 @@ chrome.runtime.onMessage.addListener(
         }
 
         function loadScript(videoId, languageFrom) {
-            // console.log("**********loadScript Start*********");
-            // console.log(videoId)
             let script;
             $.ajax({
                 url: GOOGLE_VIDEO_API,
@@ -59,7 +57,7 @@ chrome.runtime.onMessage.addListener(
                     lang: languageFrom,
                 },
                 success: (result) => {
-                    script = result.getElementsByTagName("text");
+                    script = result.getElementsByTagName("text");   //array of scripts
                     ytplayer.currentTime = 0;
                     let cont = false;
                     let startTime = 0.0;
