@@ -9,6 +9,8 @@ $(function(){
     //get vidId
     let vidId;
     let languageTo = "";
+    let voiceGender = "";
+
     chrome.tabs.getSelected(null, (tab)=>{
         if(tab.url.startsWith(YOUTUBE_URL)){
             console.log("HERE")
@@ -35,7 +37,7 @@ $(function(){
             success: (result)=>{
                 console.log("token success: " + result)
                 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                    chrome.tabs.sendMessage(tabs[0].id, {videoId: vidId, lang: languageTo, token: result }, null);
+                    chrome.tabs.sendMessage(tabs[0].id, {videoId: vidId, lang: languageTo, token: result, gender: voiceGender }, null);
                 });
             }  
         })
@@ -47,6 +49,11 @@ $(function(){
     
     $("#lang-option").change(function() {
         languageTo = $(this).val();
+        console.log(languageTo);
+    });
+
+    $("#gender-option").change(function() {
+        voiceGender = $(this).val();
         console.log(languageTo);
     });
 

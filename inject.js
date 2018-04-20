@@ -20,7 +20,7 @@ var ytplayerTime = setInterval(function () {
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         // console.log(request);
-        var { videoId, lang, token } = request;
+        var { videoId, lang, token, gender } = request;
         // console.log(videoId)
         document.getElementsByClassName("video-stream html5-main-video")[0].volume = 0.2;
         getLang();
@@ -124,7 +124,7 @@ chrome.runtime.onMessage.addListener(
         }
 
         function voiceOver(translatedScript) {
-            var VidSource = MS_URL + "/Speak?appid=Bearer " + token + "&format=audio/mp3&options=male&language=" + lang + "&text=" + translatedScript;
+            var VidSource = MS_URL + "/Speak?appid=Bearer " + token + "&format=audio/mp3&options=" + gender + "&language=" + lang + "&text=" + translatedScript;
 
             if ($("#video-source") != null) {
                 $("#video-source").remove();
