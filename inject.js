@@ -62,9 +62,10 @@ chrome.runtime.onMessage.addListener(
                     script = processScript(script);
                     console.log(script)
                     for(let i = 0; i < script.length; i++){
-                        setTimeout(()=>{
-                            translate(script[i].script, i);
-                        }, script[i].startTime*1000);
+                        // setTimeout(()=>{
+                        //     translate(script[i].script, i);
+                        // }, script[i].startTime*1000);
+                        translate(script[i].script, i);
                     }
                 }
             })
@@ -127,11 +128,11 @@ chrome.runtime.onMessage.addListener(
         function voiceOver(translatedScript, i) {
             var VidSource = MS_URL + "/Speak?appid=Bearer " + token + "&format=audio/mp3&options=male&language=" + lang + "&text=" + translatedScript;
 
-            if ($("#video-source") != null) {
-                $("#video-source").remove();
-            }
+            // if ($("#video-source") != null) {
+            //     $("#video-source").remove();
+            // }
             var aud = $("<audio>");
-            $(aud).attr({ "id": `voice${i}`, "autoplay": "" });
+            $(aud).attr({ "id": `voice${i}`, });
             var vidSrc = $("<source>");
             vidSrc.attr({
                 "id": "video-source",
