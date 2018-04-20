@@ -131,19 +131,41 @@ chrome.runtime.onMessage.addListener(
             // if ($("#video-source") != null) {
             //     $("#video-source").remove();
             // }
-            var aud = $("<audio>");
-            $(aud).attr({ "id": `voice${i}`, });
-            var vidSrc = $("<source>");
-            vidSrc.attr({
-                "id": "video-source",
-                "type": "audio/mpeg",
-                "src": VidSource
-            });
+            // var aud = $("<audio>");
+            // $(aud).attr({ "id": `voice${i}`, });
+            // var vidSrc = $("<source>");
+            // vidSrc.attr({
+            //     "id": "video-source",
+            //     "type": "audio/mpeg",
+            //     "src": VidSource
+            // });
+            
+
+            // aud.append(vidSrc);
+            // $('body').append(aud);
+
+
+            var aud = document.createElement("audio");
+            aud.setAttribute("id", "voice"+i);
+            var vidSrc = document.createElement("source");
+            vidSrc.setAttribute("id", "video-source");
+            vidSrc.setAttribute("type", "audio/mpeg");
+            vidSrc.setAttribute("src", VidSource);            
+
             aud.append(vidSrc);
-            $('body').append(aud);
+            // aud.onplaying = function() {
+            //     console.log("The video is now playing");
+            // };
+            aud.onended = function() {
+                console.log("AUDIO END");
+                var ytplayer = document.getElementById("movie_player");
+                console.log("current" + ytplayer.getCurrentTime());
+            }
+
+            document.getElementsByTagName('body')[0].append(aud);
         }
 
-
+        
     }
 )
 
