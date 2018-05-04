@@ -9,13 +9,35 @@ const MS_URL = "https://api.microsofttranslator.com/V2/Http.svc";
 const MS_KEY = "a8255cb54abf4b85b6355ce1dfae1ccb";
 const MS_TOKEN_URL = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
 
-
-
 var ytplayer = document.getElementsByClassName("video-stream html5-main-video")[0];
 var ytplayerTime = setInterval(function () {
     ytplayer = document.getElementsByClassName("video-stream html5-main-video")[0];
     ytplayerTime = ytplayer.currentTime;
 }, 500);
+
+var timers = [];
+var currCount = 0;
+
+ytplayer.addEventListener("click",function(){
+    // console.log(currAud);
+    // console.log(timers);
+    let isPlaying = document.getElementsByClassName('ytp-bezel')[0].getAttribute("aria-label")=="Pause";
+    if(isPlaying){
+        // currAud.play();
+        for(var i = currCount; i < timers.length; i++){
+            timers[i].resume();
+        }
+        console.log(currCount);
+        document.getElementById(`voice${currCount}`).play();
+    } else{
+        // currAud.pause();
+        for(var i = currCount; i < timers.length; i++){
+            timers[i].pause();
+        }
+        document.getElementById(`voice${currCount}`).pause();
+    }
+})
+
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
@@ -57,55 +79,64 @@ chrome.runtime.onMessage.addListener(
                     lang: languageFrom,
                 },
                 success: (result) => {
-                    script = result.getElementsByTagName("text");   //array of scripts
+                    script = result.getElementsByTagName("text"); //array of scripts
                     ytplayer.currentTime = 0;
-                    let cont = false;
-                    let startTime = 0.0;
-                    let val = "";
-                    for (var i = 0; i <= script.length; i++) {
-                        if ((i > 0 && !cont) || i == script.length) {
-                            let voice = val;
-                            startTime = parseFloat(startTime);
-                            // wait until audio and video sync
-                            setTimeout(function () {
-                                // console.log("startTime: " + startTime + " : playerTime:" + ytplayerTime + " val:" + voice);
-                                translate(voice);
-                            }, (startTime * 1000));
-                            console.log("*******VAL********", voice);
-                            if (i == script.length) break;
-                        }
-
-                        if (!cont) {
-                            startTime = script[i].getAttribute("start");
-                            val = "";
-                        }
-                        let line = script[i]["textContent"].replace(/\n/g, " ");
-                        // if the line starts with a lower case
-                        if (i < script.length-1) {
-                            let next = script[i+1]["textContent"].replace(/\n/g, " ");
-                            if (isLowerCase(next)) {
-                                cont = true;
-                            } else {
-                                cont = false;
-                            }
-                        }
-                        val += htmlDecode(line) + " ";
+                    script = processScript(script);
+                    console.log(script)
+                    for(var i = 0; i < script.length; i++){
+                        translate(script[i].script, i);
+                        (function(j) {
+                            var timer = new Timer(()=>{
+                                currCount = j;
+                                document.getElementById(`voice${currCount}`).play();
+                            }, script[j].startTime*1000);
+                            timers.push(timer);
+                        })(i);
+                        
                     }
+                    // setTimeout(()=>{
+                    //     translate(script[i].script, i);
+                    // }, script[i].startTime*1000);
+                    // translate(script[i].script, i);
                 }
             })
         }
 
-        function isLowerCase(myString) { 
-            return (myString.charAt(0) == myString.charAt(0).toLowerCase()); 
-          } 
-          
-        function htmlDecode(input) {
-            var e = document.createElement('div');
-            e.innerHTML = input;
-            return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+        function processScript(originalScripts){
+            let copiedScripts = [];
+
+            //hard copy
+            for(let i = 0; i < originalScripts.length; i++){
+                let temp = {};
+                temp.startTime = +originalScripts[i].getAttribute("start");
+                temp.script = "" + originalScripts[i].innerHTML.replace(/\n/g," ").replace(/&amp;#39;/g, "\'").replace(/&amp;quot;/g, "\"");
+                copiedScripts.push(temp);
+            }
+
+            for(let i = 0; i < copiedScripts.length; i++){
+                if(isStartingWithLowerCase(copiedScripts[i].script)){
+                    copiedScripts[i-1].script = (copiedScripts[i-1].script + " " + copiedScripts[i].script);
+                    copiedScripts.splice(i, 1);
+                    i--;
+                }
+            }
+            return copiedScripts;
         }
 
-        function translate(script) {
+        function isStartingWithLowerCase(myString) { 
+            return (myString.charAt(0) == myString.charAt(0).toLowerCase()); 
+        } 
+
+        // 04/20/2018 5:24AM 현민: instead of using htmlDecode, used 'replace' to replace single and double quotes.
+        // function htmlDecode(input) {
+        //     var e = document.createElement('div');
+        //     e.innerHTML = input;
+        //     // console.log(e.childNodes[0].nodeValue);
+        //     return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+        // }
+
+        function translate(script, i) {
+            // script = htmlDecode(script);
             $.ajax({
                 url: MS_URL + "/Translate",
                 data: {
@@ -115,20 +146,18 @@ chrome.runtime.onMessage.addListener(
                 },
                 success: (result) => {
                     var translatedScript = (result.getElementsByTagName('string')[0].innerHTML);
-                    console.log(translatedScript)
-                    voiceOver(translatedScript);
+                    voiceOver(translatedScript, i);
                 }
             })
         }
 
-        function voiceOver(translatedScript) {
-            var VidSource = MS_URL + "/Speak?appid=Bearer " + token + "&format=audio/mp3&options=" + gender + "&language=" + lang + "&text=" + translatedScript;
-
-            if ($("#video-source") != null) {
-                $("#video-source").remove();
-            }
+        function voiceOver(translatedScript, i) {
+            var VidSource = `${MS_URL}/Speak?appid=Bearer ${token}&format=audio/mp3&options=${gender}&language=${lang}&text=${translatedScript}`;
+            // if ($("#video-source") != null) {
+            //     $("#video-source").remove();
+            // }
             var aud = $("<audio>");
-            $(aud).attr({ "id": "voice", "autoplay": "" });
+            $(aud).attr({ "id": `voice${i}`});
             var vidSrc = $("<source>");
             vidSrc.attr({
                 "id": "video-source",
@@ -139,9 +168,24 @@ chrome.runtime.onMessage.addListener(
             $('body').append(aud);
         }
 
-
     }
 )
 
+function Timer(callback, delay) {
+    var timerId, start, remaining = delay;
+
+    this.pause = function() {
+        window.clearTimeout(timerId);
+        remaining -= new Date() - start;
+    };
+
+    this.resume = function() {
+        start = new Date();
+        window.clearTimeout(timerId);
+        timerId = window.setTimeout(callback, remaining);
+    };
+
+    this.resume();
+}
 
 
