@@ -35,9 +35,6 @@ body {
 button {
     font-size: 15px;
 }
-label, select, option {
-    /* font-size: 15px;     */
-}
 
 .selectWrapper{
     border-radius: 36px;
@@ -48,11 +45,23 @@ label, select, option {
 }
 
 select {
-    width: 65px;
+    /* width: 65px;
     height: 20px;
     outline: none;
     background-color: white;
-    font-size: 13px;
+    font-size: 13px; */
+
+    /* styling */
+  background-color: white;
+  display: inline-block;
+  border: 0.5px solid lightgray;
+  cursor: pointer;
+  height: 18px;
+  margin-bottom: 3px;
+  margin-left: 30px;
+}
+#gender-option {
+    margin-left: 38px;
 }
 
 #voice {
