@@ -41,6 +41,7 @@ ytplayer.addEventListener("click",function(){
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
+        $('#voicelator').remove();
         // console.log(request);
         var { videoId, lang, token, gender } = request;
         // console.log(videoId)
@@ -82,7 +83,10 @@ chrome.runtime.onMessage.addListener(
                     script = result.getElementsByTagName("text"); //array of scripts
                     ytplayer.currentTime = 0;
                     script = processScript(script);
-                    console.log(script)
+                    console.log(script);
+                    var voicelator = $("<div>");
+                    voicelator.attr({ "id": `voicelator`});
+                    $('body').append(voicelator);
                     for(var i = 0; i < script.length; i++){
                         translate(script[i].script, i);
                         (function(j) {
@@ -165,7 +169,7 @@ chrome.runtime.onMessage.addListener(
                 "src": VidSource
             });
             aud.append(vidSrc);
-            $('body').append(aud);
+            $('#voicelator').append(aud);
         }
 
     }
