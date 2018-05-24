@@ -1,5 +1,6 @@
+
 html{
-    width: 150px;
+    width: 180px;
     height: 140px;
 }
 
@@ -18,9 +19,7 @@ html{
 html {
     height: 100px;
 }
-body {
-    /* width: 150px; */
-}
+
 .container {
     font-family: "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
 }
@@ -37,12 +36,14 @@ button {
 }
 
 .selectWrapper{
+    min-width: 100px;
     border-radius: 36px;
     display: inline-block;
     overflow: hidden;
     background: #cccccc;
     border: 1px solid #777777;
 }
+
 
 select {
     /* width: 65px;
@@ -52,14 +53,19 @@ select {
     font-size: 13px; */
 
     /* styling */
-  background-color: white;
-  display: inline-block;
-  border: 0.5px solid lightgray;
-  cursor: pointer;
-  height: 18px;
-  margin-bottom: 3px;
-  margin-left: 30px;
+    background-color: white;
+    display: inline-block;
+    border: 0.5px solid lightgray;
+    cursor: pointer;
+    height: 18px;
+    width: 90px;
+    margin-bottom: 3px;
+    margin-left: 0px;
 }
+#lang-option{
+    margin-left: 5px;
+}
+
 #gender-option {
     margin-left: 38px;
 }

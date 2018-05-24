@@ -11,31 +11,27 @@
         <div class="logo-container">
             <img id="logo" src="img/logo.png" class="logo">
         </div>
-        <div id="selectWrapper">
-            <label>Translate to:</label>
-            <select id="lang-option">
-                <!-- <option value="select">Select</option> -->
-                <option value="en">en</option>
-                <option value="es">es</option>
-                <option value="fr">fr</option>
-                <option value="jp">jp</option>
-                <option value="ko">ko</option>
-
-            </select>
+        <div class="form-container">
+            <div id="selectWrapper">
+                <label>Translate to:</label>
+                <select id="lang-option">
+                    <option value="en">English</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <option value="jp">Japanese</option>
+                    <option value="ko">Korean</option>
+                </select>
+            </div>
+            <div id="selectWrapper">
+                    <label>Voice:</label>
+                    <select id="gender-option">
+                        <option value="female">Female</option>
+                        <option value="male">Male</option>
+                    </select>
+                </div>
+                <button id="speak">Translate</button>
+        
         </div>
-        <div id="selectWrapper">
-            <label>Voice:</label>
-            <!-- <form id="gender-option">
-                <label><input type="radio" name="gender" value="female" checked> Female </label> -->
-            <!-- <br> -->
-            <!-- <label><input type="radio" name="gender" value="male"> Male</label>
-            </form> -->
-            <select id="gender-option">
-                <option value="female">Female</option>
-                <option value="male">Male</option>
-            </select>
-        </div>
-        <button id="speak">Translate</button>
     </div>
     <script type="text/javascript" src="app.js"></script>
 </body>
