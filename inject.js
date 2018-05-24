@@ -6,7 +6,7 @@ const YOUTUBE_KEY = "AIzaSyB3H6Fl0_1fx5DCGMJRBlubT4tSQgnFlOY";
 const GOOGLE_API = "https://www.googleapis.com/youtube/v3/captions"
 const GOOGLE_VIDEO_API = "https://video.google.com/timedtext";
 const MS_URL = "https://api.microsofttranslator.com/V2/Http.svc";
-const MS_KEY = "a8255cb54abf4b85b6355ce1dfae1ccb";
+const MS_KEY = "3d14dc244fe44275b61e49c8c22033a5";
 const MS_TOKEN_URL = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
 
 var ytplayer = document.getElementsByClassName("video-stream html5-main-video")[0];
@@ -19,8 +19,6 @@ var timers = [];
 var currCount = 0;
 
 ytplayer.addEventListener("click",function(){
-    // console.log(currAud);
-    // console.log(timers);
     let isPlaying = document.getElementsByClassName('ytp-bezel')[0].getAttribute("aria-label")=="Pause";
     if(isPlaying){
         // currAud.play();
@@ -41,6 +39,7 @@ ytplayer.addEventListener("click",function(){
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
+        clearTimer();
         $('#voicelator').remove();
         // console.log(request);
         var { videoId, lang, token, gender } = request;
@@ -128,7 +127,7 @@ chrome.runtime.onMessage.addListener(
         }
 
         function isStartingWithLowerCase(myString) { 
-            return (myString.charAt(0) == myString.charAt(0).toLowerCase()); 
+            return (myString.charAt(0) != myString.charAt(0).toUpperCase()); 
         } 
 
         // 04/20/2018 5:24AM 현민: instead of using htmlDecode, used 'replace' to replace single and double quotes.
@@ -138,6 +137,13 @@ chrome.runtime.onMessage.addListener(
         //     // console.log(e.childNodes[0].nodeValue);
         //     return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
         // }
+        function clearTimer(){
+            for(let i = 0; i < timers.length; i++){
+                timers[i].delete();
+            }
+            timers = [];
+            currCount = 0;
+        }
 
         function translate(script, i) {
             // script = htmlDecode(script);
@@ -188,6 +194,10 @@ function Timer(callback, delay) {
         window.clearTimeout(timerId);
         timerId = window.setTimeout(callback, remaining);
     };
+
+    this.delete = function() {
+        window.clearTimeout(timerId);
+    }
 
     this.resume();
 }
