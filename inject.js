@@ -3,7 +3,7 @@ console.log("?")
 const YOUTUBE_URL = "https://www.youtube.com/watch?v=";
 const YOUTUBE_KEY = "AIzaSyB3H6Fl0_1fx5DCGMJRBlubT4tSQgnFlOY";
 
-const GOOGLE_API = "https://www.googleapis.com/youtube/v3/captions"
+const GOOGLE_API = "https://www.googleapis.com/youtube/v3/videos"
 const GOOGLE_VIDEO_API = "https://video.google.com/timedtext";
 const MS_URL = "https://api.microsofttranslator.com/V2/Http.svc";
 const MS_KEY = "3d14dc244fe44275b61e49c8c22033a5";
@@ -54,17 +54,18 @@ chrome.runtime.onMessage.addListener(
                 url: GOOGLE_API,
                 data: {
                     part: "snippet",
-                    videoId: videoId,
+                    id: videoId,
                     key: YOUTUBE_KEY
                 },
                 success: (result) => {
-                    if (result.items.length == 1) {
-                        languageFrom = result.items[0].snippet.language;
-                    } else {
-                        languageFrom = 'en'
-                    }
-                    // console.log("success in getting language");
-                    script = loadScript(videoId, languageFrom);
+                    // if (result.items.length == 1) {
+                    //     languageFrom = result.items[0].snippet.language;
+                    // } else {
+                    //     languageFrom = 'en'
+                    // }
+                    languageFrom = result.items[0].snippet.defaultAudioLanguage.substring(0,2);
+                    console.log("LANG FROM!!!" + languageFrom);
+                    // script = loadScript(videoId, languageFrom);
 
                 }
             });
