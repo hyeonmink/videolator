@@ -63,10 +63,10 @@ chrome.runtime.onMessage.addListener(
                     // } else {
                     //     languageFrom = 'en'
                     // }
-                    languageFrom = result.items[0].snippet.defaultAudioLanguage.substring(0,2);
+                    languageFrom = result.items[0].snippet.defaultAudioLanguage;
+                    languageFrom = languageFrom.substring(0,2).toLowerCase();
                     console.log("LANG FROM!!!" + languageFrom);
-                    // script = loadScript(videoId, languageFrom);
-
+                    script = loadScript(videoId, languageFrom);
                 }
             });
         }
