@@ -6,7 +6,7 @@ const YOUTUBE_KEY = "AIzaSyB3H6Fl0_1fx5DCGMJRBlubT4tSQgnFlOY";
 const GOOGLE_API = "https://www.googleapis.com/youtube/v3/videos"
 const GOOGLE_VIDEO_API = "https://video.google.com/timedtext";
 const MS_URL = "https://api.microsofttranslator.com/V2/Http.svc";
-const MS_KEY = "8551e29da943425cbc5641b88b805167";
+const MS_KEY = "12d7d1b55c8f41c8b7fd76ad18ed0602";
 const MS_TOKEN_URL = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
 
 var ytplayer = document.getElementsByClassName("video-stream html5-main-video")[0];
